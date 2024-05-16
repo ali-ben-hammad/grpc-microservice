@@ -83,6 +83,29 @@ public class BankGrpcService extends bankServiceGrpc.bankServiceImplBase {
 
     @Override
     public StreamObserver<Bank.convertCurrencyRequest> fullStream(StreamObserver<Bank.convertCurrencyResponse> responseObserver) {
-        return super.fullStream(responseObserver);
+        return new StreamObserver<Bank.convertCurrencyRequest>() {
+            @Override
+            public void onNext(Bank.convertCurrencyRequest convertCurrencyRequest) {
+                Bank.convertCurrencyResponse response = Bank.convertCurrencyResponse.newBuilder()
+                        .setAmount(convertCurrencyRequest.getAmount())
+                        .setFrom(convertCurrencyRequest.getFrom())
+                        .setTo(convertCurrencyRequest.getTo())
+                        .setResult(convertCurrencyRequest.getAmount() * Math.random() * 45)
+                        .build();
+                responseObserver.onNext(response);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onCompleted() {
+                responseObserver.onCompleted();
+            }
+
+        };
+
     }
 }
